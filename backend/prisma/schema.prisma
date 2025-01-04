@@ -1,0 +1,122 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String     @id @default(uuid())
+  email     String     @unique
+  password  String
+  role      String     @default("user")
+  avatar    String?
+  isActive  Boolean    @default(false)
+  isPremium Boolean    @default(false)
+  premiumExpiry DateTime?
+  createdAt DateTime   @default(now())
+  profile   Profile?
+  favorites Favorite[]
+  reads     Read[]
+  payments  Payment[]
+}
+
+model Profile {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  firstName String?
+  lastName  String?
+  phone     String?
+  address   String?
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+}
+
+model Book {
+  id          String         @id @default(uuid())
+  title       String
+  author      String
+  description String?
+  coverImage  String?
+  publishedAt DateTime?
+  isbn        String?
+  publisher   String?
+  totalPages  Int            @default(0)
+  isPublished Boolean        @default(false)
+  fileBook    String?
+  categories  BookCategory[]
+  favorites   Favorite[]
+  reads       Read[]
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+}
+
+model Category {
+  id          String         @id @default(uuid())
+  name        String         @unique
+  description String?
+  books       BookCategory[]
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+}
+
+model BookCategory {
+  bookId     String
+  categoryId String
+  book       Book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+
+  @@id([bookId, categoryId])
+  @@index([bookId])
+  @@index([categoryId])
+}
+
+model Favorite {
+  id        String   @id @default(uuid())
+  userId    String
+  bookId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  book      Book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, bookId])
+  @@index([userId])
+  @@index([bookId])
+}
+
+model Read {
+  id        String   @id @default(uuid())
+  userId    String
+  bookId    String
+  readCount Int      @default(1)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  book      Book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, bookId])
+  @@index([userId])
+  @@index([bookId])
+}
+
+model Payment {
+  id            String    @id @default(uuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  amount        Float
+  orderId       String    @unique
+  status        String    @default("pending") // pending, success, failed, expired
+  paymentType   String?   // payment method from midtrans
+  paymentUrl    String?   // snap url from midtrans
+  snapToken     String?   // snap token from midtrans
+  duration      Int       // subscription duration in months
+  expiredAt     DateTime?
+  paidAt        DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([userId])
+}
