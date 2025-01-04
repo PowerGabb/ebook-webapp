@@ -49,22 +49,22 @@ ReadBooks adalah aplikasi baca buku online yang memungkinkan pengguna untuk memb
 ## Cara Install
 
 
-clone repository
+- clone repository
 ```bash
 git clone https://github.com/PowerGabb/ebook-webapp
 ```
 
-cd ke folder backend
+- cd ke folder backend
 ```bash
 cd backend
 ```
 
-install dependencies
+- install dependencies
 ```bash
 npm install
 ```
 
-konfigurasi env
+- konfigurasi env
 ```bash
 JWT_SECRET=
 JWT_EXPIRATION=10s
@@ -78,29 +78,29 @@ DATABASE_URL=
 
 ```
 
-update database
+- update database
 ```bash
 npx prisma migrate dev --name dev
 ```
 
-tambah admin user dengan role admin
+- tambah admin user dengan role admin
 
-run server
+- run server
 ```bash
 npm start
 ```
 
-cd ke folder frontend
+- cd ke folder frontend
 ```bash
 cd frontend
 ```
 
-install dependencies
+- install dependencies
 ```bash
 npm install
 ```
 
-run server
+- run server
 ```bash
 npm run dev
 ```
