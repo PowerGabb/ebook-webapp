@@ -83,6 +83,8 @@ update database
 npx prisma migrate dev --name dev
 ```
 
+tambah admin user dengan role admin
+
 run server
 ```bash
 npm start
